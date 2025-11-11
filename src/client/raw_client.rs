@@ -166,10 +166,7 @@ where
             return Err(ReasonCode::NetworkError);
         }
         let conn = self.connection.as_mut().unwrap();
-        let mut identifier: u16 = self.config.rng.next_u32() as u16;
-	while identifier == 0 {
-            identifier = self.config.rng.next_u32() as u16;
-	}
+        let identifier: u16 = self.config.rng.next_u32() as u16;
         let len = {
             let mut packet = PublishPacket::<'b, MAX_PROPERTIES>::new();
             packet.add_topic_name(topic_name);

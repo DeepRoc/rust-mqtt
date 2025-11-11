@@ -65,6 +65,25 @@ where
         }
     }
 
+    /// Invoke the underlying raw poll() method to asynchronous messages while waiting
+    /// for QoS1 acknowledgments.
+
+    pub async fn poll<'b>(&'b mut self) -> Result<Event<'b>, ReasonCode> {
+        self.raw.poll::<0>().await
+    }
+
+    pub async fn send<'b>(
+        &'b mut self,
+        topic_name: &'b str,
+        message: &'b [u8],
+        qos: QualityOfService,
+        retain: bool,
+    ) -> Result<u16, ReasonCode> {
+        self.raw
+            .send_message(topic_name, message, qos, retain)
+            .await
+    }
+
     /// Method allows client connect to server. Client is connecting to the specified broker
     /// in the `ClientConfig`. Method selects proper implementation of the MQTT version based on the config.
     /// If the connection to the broker fails, method returns Err variable that contains
@@ -125,7 +144,7 @@ where
             Ok(())
         }
     }
-
+    
     /// Method allows client subscribe to multiple topics specified in the parameter
     /// `topic_names` on the broker specified in the `ClientConfig`. Generics `TOPICS`
     /// sets the value of the `topics_names` vector. MQTT protocol implementation
